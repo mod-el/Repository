@@ -1,0 +1,8 @@
+{
+	"name": "Repository",
+	"description": "Setup a ModEl repository on your own server",
+	"version": "0.0.1",
+	"dependencies": {
+		"Db": ">=1.4.2"
+	}
+}

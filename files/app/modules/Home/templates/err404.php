@@ -1,0 +1,2 @@
+<?php $page = implode('/', $this->model->getRequest()); ?>
+<p>Ops, so sorry! The page you're looking for <b><?=$page ? entities('('.$page.')') : ''?></b> was not found. <i>(<?=entities($this->options['404-reason'])?>)</i></p>
