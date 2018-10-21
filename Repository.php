@@ -105,7 +105,7 @@ class Repository extends Module
 			$m = explode('|', $m);
 
 			$mod = $this->model->_Db->select('modules', ['folder' => $m[0]]);
-			if(!isset($modules[$mod['folder']]))
+			if (!isset($modules[$mod['folder']]))
 				continue;
 
 			$module = $modules[$mod['folder']];
@@ -187,7 +187,7 @@ class Repository extends Module
 	 * @param string $rule
 	 * @return array
 	 */
-	public function getController(array $request, string $rule)
+	public function getController(array $request, string $rule): ?array
 	{
 		return [
 			'controller' => 'Repository',
