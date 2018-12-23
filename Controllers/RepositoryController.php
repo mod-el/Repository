@@ -4,7 +4,7 @@ use Model\Core\Controller;
 
 class RepositoryController extends Controller
 {
-	function index()
+	public function index()
 	{
 		if (!isset($_GET['act']))
 			die('Unknown action.');
@@ -41,14 +41,20 @@ class RepositoryController extends Controller
 				}
 
 				$modules = $this->model->_Repository->getModules($specific);
-				$this->model->sendJSON($modules, false);
+				return $modules;
 				break;
 			case 'get-files':
 				$this->checkKey();
 
 				if (isset($_GET['module'])) {
 					$files = $this->model->_Repository->getModuleFiles($_GET['module']);
-					$this->model->sendJSON($files, false);
+					return $files;
+				} elseif (isset($_GET['modules'])) {
+					$files = [];
+					$modules = explode(',', $_GET['modules']);
+					foreach ($modules as $module)
+						$files = array_merge($files, $this->model->_Repository->getModuleFiles($module));
+					return $files;
 				} else {
 					die('Invalid data.');
 				}
@@ -64,7 +70,7 @@ class RepositoryController extends Controller
 					$installModules[] = 'Core';
 				$files = $this->model->_Repository->getInstallList($installModules);
 
-				$this->model->sendJSON($files, false);
+				return $files;
 				break;
 			case 'get-file':
 				$this->checkKey();
