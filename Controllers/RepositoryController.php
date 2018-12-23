@@ -52,8 +52,13 @@ class RepositoryController extends Controller
 				} elseif (isset($_GET['modules'])) {
 					$files = [];
 					$modules = explode(',', $_GET['modules']);
-					foreach ($modules as $module)
-						$files = array_merge($files, $this->model->_Repository->getModuleFiles($module));
+					foreach ($modules as $module) {
+						$moduleFiles = $this->model->_Repository->getModuleFiles($module);
+						foreach ($moduleFiles as $f) {
+							$f['module'] = $module;
+							$files[] = $f;
+						}
+					}
 					return $files;
 				} else {
 					die('Invalid data.');
@@ -80,33 +85,44 @@ class RepositoryController extends Controller
 					die('Invalid data. #1');
 				}
 
-				$file = trim($_GET['file']);
-				if ($file{0} == '/') {
+				$file = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, trim($_GET['file']));
+				if ($file{0} === DIRECTORY_SEPARATOR) {
 					header("HTTP/1.1 401 Unauthorized");
 					die('Invalid data. #2');
 				}
 
-				$files = $this->model->_Repository->getInstallList();
-
-				if ((!isset($_GET['install']) or (!in_array($_GET['file'], $files['model']) and !in_array($_GET['file'], $files['config']))) and (!isset($_GET['module']) or strpos($_GET['module'], '/') !== false)) {
-					header("HTTP/1.1 401 Unauthorized");
-					die('Invalid data. #3');
-				}
-
 				$config = $this->model->_Repository->retrieveConfig();
 
-				if (isset($_GET['install'])) {
-					if (substr($file, 0, 6) === 'model' . DIRECTORY_SEPARATOR) {
-						$full_path = INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . substr($file, 6);
-					} else {
-						$full_path = INCLUDE_PATH . 'model' . DIRECTORY_SEPARATOR . 'Repository' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $file;
+				if (!isset($_GET['module']) and !isset($_GET['install'])) { // New way
+					$module = explode(DIRECTORY_SEPARATOR, $file)[0];
+					$modules = $this->model->_Repository->getModules();
+					if (!isset($modules[$module])) {
+						header("HTTP/1.1 404 Not Found");
+						die('Module not found');
 					}
+
+					$full_path = INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . $file;
 				} else {
-					$full_path = INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . $_GET['module'] . DIRECTORY_SEPARATOR . $file;
+					$files = $this->model->_Repository->getInstallList();
+
+					if ((!isset($_GET['install']) or (!in_array($_GET['file'], $files['model']) and !in_array($_GET['file'], $files['config']))) and (!isset($_GET['module']) or strpos($_GET['module'], '/') !== false)) {
+						header("HTTP/1.1 401 Unauthorized");
+						die('Invalid data. #3');
+					}
+
+					if (isset($_GET['install'])) {
+						if (substr($file, 0, 6) === 'model' . DIRECTORY_SEPARATOR) {
+							$full_path = INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . substr($file, 6);
+						} else {
+							$full_path = INCLUDE_PATH . 'model' . DIRECTORY_SEPARATOR . 'Repository' . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . $file;
+						}
+					} else {
+						$full_path = INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . $_GET['module'] . DIRECTORY_SEPARATOR . $file;
+					}
 				}
 
 				if (!file_exists($full_path)) {
-					header("HTTP/1.1 401 Unauthorized");
+					header("HTTP/1.1 404 Not Found");
 					die('File not found');
 				}
 				if (!is_file($full_path)) {
