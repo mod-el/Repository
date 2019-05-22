@@ -15,9 +15,16 @@ class RepositoryController extends Controller
 				die('Done');
 				break;
 			case 'pull-module':
-				$payload = json_decode($_POST['payload'], true);
-				if ($payload and isset($payload['repository']['name'])) {
-					echo $this->model->_Repository->pullModule($payload['repository']['name']);
+				$name = null;
+				if (isset($_GET['name'])) {
+					$name = $_GET['name'];
+				} elseif (isset($_POST['payload'])) {
+					$payload = json_decode($_POST['payload'], true);
+					if ($payload)
+						$name = $payload['repository']['name'] ?? null;
+				}
+				if ($name) {
+					echo $this->model->_Repository->pullModule($name);
 				} else {
 					echo 'Decoding error';
 				}
