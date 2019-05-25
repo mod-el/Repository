@@ -2,8 +2,7 @@
 
 class FrontController extends \Model\Core\Core
 {
-	function init()
+	public function init()
 	{
-		$this->viewOptions['cache'] = false;
 	}
 }
