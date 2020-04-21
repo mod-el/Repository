@@ -93,7 +93,7 @@ class RepositoryController extends Controller
 				}
 
 				$file = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, trim($_GET['file']));
-				if ($file{0} === DIRECTORY_SEPARATOR) {
+				if ($file[0] === DIRECTORY_SEPARATOR) {
 					header("HTTP/1.1 401 Unauthorized");
 					die('Invalid data. #2');
 				}
