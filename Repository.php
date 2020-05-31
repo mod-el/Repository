@@ -83,7 +83,7 @@ class Repository extends Module
 	 */
 	public function checkKey(string $key): bool
 	{
-		$check = $this->model->_Db->count('users', ['key' => $key]);
+		$check = $this->model->_Db->count('repository_users', ['key' => $key]);
 		return (bool)($check > 0);
 	}
 
