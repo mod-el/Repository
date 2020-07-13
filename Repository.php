@@ -105,7 +105,7 @@ class Repository extends Module
 			$m = explode('|', $m);
 
 			$mod = $this->model->_Db->select('modules', ['folder' => $m[0]]);
-			if (!isset($modules[$mod['folder']]))
+			if (!$mod or !isset($modules[$mod['folder']]))
 				continue;
 
 			$module = $modules[$mod['folder']];
