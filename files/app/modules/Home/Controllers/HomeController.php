@@ -2,8 +2,13 @@
 
 use Model\Core\Controller;
 
-class HomeController extends Controller {
-	function index(){
+class HomeController extends Controller
+{
+	public function init()
+	{
+	}
 
+	public function index()
+	{
 	}
 }

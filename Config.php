@@ -10,7 +10,7 @@ class Config extends Module_Config
 	protected function assetsList()
 	{
 		$this->addAsset('config', 'config.php', function () {
-			return "<?php\n\$config = ['path'=>'app" . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "repository'];\n";
+			return "<?php\n\$config = ['path' => 'app" . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "repository'];\n";
 		});
 	}
 

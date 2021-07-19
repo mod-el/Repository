@@ -1,5 +1,5 @@
 <?php
 $config = [
-	'repository'=>'[zk:repository]',
-	'license'=>'[zk:key]',
+	'repository' => '[zk:repository]',
+	'license' => '[zk:key]',
 ];
