@@ -13,7 +13,7 @@ class RepositoryController extends Controller
 			case 'refresh-modules':
 				$this->model->_Repository->refreshModules();
 				die('Done');
-				break;
+
 			case 'pull-module':
 				$name = null;
 				if (isset($_GET['name'])) {
@@ -23,33 +23,32 @@ class RepositoryController extends Controller
 					if ($payload)
 						$name = $payload['repository']['name'] ?? null;
 				}
-				if ($name) {
+
+				if ($name)
 					echo $this->model->_Repository->pullModule($name);
-				} else {
+				else
 					echo 'Decoding error';
-				}
+
 				$this->model->_Repository->refreshModules();
 				die();
-				break;
+
 			case 'installer':
 				header("Content-Transfer-Encoding: Binary");
 				header("Content-disposition: attachment; filename=\"zkinstall.php\"");
 				$config = $this->model->_Repository->retrieveConfig();
 				echo file_get_contents(INCLUDE_PATH . $config['path'] . DIRECTORY_SEPARATOR . 'zkinstall.php');
 				die();
-				break;
+
 			case 'get-modules':
 				$this->checkKey();
 
-				if (isset($_GET['modules'])) {
+				if (isset($_GET['modules']))
 					$specific = explode(',', $_GET['modules']);
-				} else {
+				else
 					$specific = [];
-				}
 
-				$modules = $this->model->_Repository->getModules($specific);
-				return $modules;
-				break;
+				return $this->model->_Repository->getModules($specific);
+
 			case 'get-files':
 				$this->checkKey();
 
@@ -70,7 +69,7 @@ class RepositoryController extends Controller
 				} else {
 					die('Invalid data.');
 				}
-				break;
+
 			case 'get-install-list':
 				$this->checkKey();
 
@@ -80,10 +79,9 @@ class RepositoryController extends Controller
 				$installModules = $_GET['modules'] ? explode(',', $_GET['modules']) : [];
 				if (!in_array('Core', $installModules))
 					$installModules[] = 'Core';
-				$files = $this->model->_Repository->getInstallList($installModules);
 
-				return $files;
-				break;
+				return $this->model->_Repository->getInstallList($installModules);
+
 			case 'get-file':
 				$this->checkKey();
 
@@ -139,10 +137,9 @@ class RepositoryController extends Controller
 
 				readfile($full_path);
 				die();
-				break;
+
 			default:
 				die('Unknwon action');
-				break;
 		}
 	}
 

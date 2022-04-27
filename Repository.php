@@ -5,10 +5,8 @@ use Model\Core\Updater;
 
 class Repository extends Module
 {
-	/** @var Updater */
-	private $updater = null;
-	/** @var array */
-	private $installFiles = [
+	private Updater $updater;
+	private array $installFiles = [
 		'model' => [
 			'.htaccess',
 			'index.php',
@@ -33,7 +31,7 @@ class Repository extends Module
 	 */
 	private function getUpdater(): Updater
 	{
-		if (!$this->updater)
+		if (!isset($this->updater))
 			$this->updater = new Updater($this->model);
 		return $this->updater;
 	}
@@ -45,7 +43,7 @@ class Repository extends Module
 	{
 		$config = $this->retrieveConfig();
 
-		$modules = $this->getUpdater()->getModules(false, $config['path']);
+		$modules = $this->getUpdater()->getModules(false, true, $config['path']);
 
 		foreach ($modules as $m) {
 			$module_id = $this->model->_Db->select('modules', ['folder' => $m->folder_name], 'id');
@@ -84,7 +82,7 @@ class Repository extends Module
 	public function checkKey(string $key): bool
 	{
 		$check = $this->model->_Db->count('repository_users', ['key' => $key]);
-		return (bool)($check > 0);
+		return ($check > 0);
 	}
 
 	/**
@@ -95,7 +93,7 @@ class Repository extends Module
 	{
 		$config = $this->retrieveConfig();
 
-		$modules = $this->getUpdater()->getModules(false, $config['path']);
+		$modules = $this->getUpdater()->getModules(false, true, $config['path']);
 
 		if (count($filter) === 0)
 			$filter = array_keys($modules);
@@ -143,7 +141,7 @@ class Repository extends Module
 	{
 		$config = $this->retrieveConfig();
 
-		$modules = $this->getUpdater()->getModules(false, $config['path']);
+		$modules = $this->getUpdater()->getModules(false, true, $config['path']);
 
 		$files = [];
 
@@ -167,7 +165,7 @@ class Repository extends Module
 	{
 		$config = $this->retrieveConfig();
 
-		$modules = $this->getUpdater()->getModules(false, $config['path']);
+		$modules = $this->getUpdater()->getModules(false, true, $config['path']);
 
 		$files = $this->installFiles;
 		foreach ($modules as $m) {
@@ -185,7 +183,7 @@ class Repository extends Module
 	 *
 	 * @param array $request
 	 * @param string $rule
-	 * @return array
+	 * @return array|null
 	 */
 	public function getController(array $request, string $rule): ?array
 	{
