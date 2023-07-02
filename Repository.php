@@ -2,6 +2,7 @@
 
 use Model\Core\Module;
 use Model\Core\Updater;
+use Model\Db\Db;
 
 class Repository extends Module
 {
@@ -45,19 +46,19 @@ class Repository extends Module
 
 		$modules = $this->getUpdater()->getModules(false, true, $config['path']);
 
+		$db = Db::getConnection();
 		foreach ($modules as $m) {
-			$module_id = $this->model->_Db->select('modules', ['folder' => $m->folder_name], 'id');
+			$module_id = $db->select('modules', ['folder' => $m->folder_name])['id'];
 			if ($module_id === false)
-				$module_id = $this->model->_Db->insert('modules', ['folder' => $m->folder_name, 'name' => $m->name, 'current_version' => $m->version]);
+				$module_id = $db->insert('modules', ['folder' => $m->folder_name, 'name' => $m->name, 'current_version' => $m->version]);
 			else
-				$this->model->_Db->update('modules', $module_id, ['current_version' => $m->version]);
+				$db->update('modules', $module_id, ['current_version' => $m->version]);
 
-			$version_id = $this->model->_Db->select('modules_versions', ['module' => $module_id, 'version' => $m->version], 'id');
-			if ($version_id) {
-				$this->model->_Db->update('modules_versions', $version_id, ['md5' => $m->md5]);
-			} else {
-				$this->model->_Db->insert('modules_versions', ['module' => $module_id, 'version' => $m->version, 'md5' => $m->md5]);
-			}
+			$version_id = $db->select('modules_versions', ['module' => $module_id, 'version' => $m->version])['id'];
+			if ($version_id)
+				$db->update('modules_versions', $version_id, ['md5' => $m->md5]);
+			else
+				$db->insert('modules_versions', ['module' => $module_id, 'version' => $m->version, 'md5' => $m->md5]);
 		}
 	}
 
@@ -81,7 +82,7 @@ class Repository extends Module
 	 */
 	public function checkKey(string $key): bool
 	{
-		$check = $this->model->_Db->count('repository_users', ['key' => $key]);
+		$check = Db::getConnection()->count('repository_users', ['key' => $key]);
 		return ($check > 0);
 	}
 
@@ -98,21 +99,23 @@ class Repository extends Module
 		if (count($filter) === 0)
 			$filter = array_keys($modules);
 
+		$db = Db::getConnection();
+
 		$return = [];
 		foreach ($filter as $m) {
 			$m = explode('|', $m);
 
-			$mod = $this->model->_Db->select('modules', ['folder' => $m[0]]);
+			$mod = $db->select('modules', ['folder' => $m[0]]);
 			if (!$mod or !isset($modules[$mod['folder']]))
 				continue;
 
 			$module = $modules[$mod['folder']];
 
-			$current_version = $this->model->_Db->select('modules_versions', ['module' => $mod['id'], 'version' => $mod['current_version']]);
+			$current_version = $db->select('modules_versions', ['module' => $mod['id'], 'version' => $mod['current_version']]);
 			if ($mod and $current_version) {
 				$old_md5 = false;
 				if (isset($m[1])) {
-					$old_version = $this->model->_Db->select('modules_versions', ['module' => $mod['id'], 'version' => $m[1]]);
+					$old_version = $db->select('modules_versions', ['module' => $mod['id'], 'version' => $m[1]]);
 					if ($old_version)
 						$old_md5 = $old_version['md5'];
 				}
