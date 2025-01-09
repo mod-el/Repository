@@ -7,7 +7,7 @@ class Config extends Module_Config
 	/**
 	 * @throws \Model\Core\Exception
 	 */
-	protected function assetsList()
+	protected function assetsList(): void
 	{
 		$this->addAsset('config', 'config.php', function () {
 			return "<?php\n\$config = ['path' => 'app" . DIRECTORY_SEPARATOR . "assets" . DIRECTORY_SEPARATOR . "repository'];\n";
