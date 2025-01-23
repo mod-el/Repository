@@ -164,7 +164,7 @@ class Repository extends Module
 	 * @param array|null $filter
 	 * @return array
 	 */
-	public function getInstallList(array $filter = null): array
+	public function getInstallList(?array $filter = null): array
 	{
 		$config = $this->retrieveConfig();
 
