@@ -14,23 +14,6 @@ class Config extends Module_Config
 		});
 	}
 
-	/**
-	 * Rule for the repository
-	 *
-	 * @return array
-	 */
-	public function getRules(): array
-	{
-		return [
-			'rules' => [
-				'',
-			],
-			'controllers' => [
-				'Repository',
-			],
-		];
-	}
-
 	public function getConfigData(): ?array
 	{
 		return [];
