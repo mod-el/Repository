@@ -8,7 +8,7 @@ class RouterProvider extends AbstractRouterProvider
 	{
 		return [
 			[
-				'pattern' => '/',
+				'pattern' => '',
 				'controller' => 'Repository',
 			],
 		];
