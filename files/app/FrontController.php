@@ -2,7 +2,7 @@
 
 class FrontController extends \Model\Core\Core
 {
-	public function init()
+	public function init(): void
 	{
 	}
 }
