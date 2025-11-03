@@ -180,18 +180,4 @@ class Repository extends Module
 
 		return $files;
 	}
-
-	/**
-	 * Repository controller
-	 *
-	 * @param array $request
-	 * @param string $rule
-	 * @return array|null
-	 */
-	public function getController(array $request, string $rule): ?array
-	{
-		return [
-			'controller' => 'Repository',
-		];
-	}
 }
